@@ -36,7 +36,7 @@ python app.py
 The service runs on:
 
 ```
-http://127.0.0.1:5000
+http://127.0.0.1:5001
 ```
 
 ---
@@ -48,7 +48,7 @@ All requests must:
 - Include header: `Content-Type: application/json`
 - Include a JSON body
 
-### POST /set_due_date
+### POST /set-due-date
 
 Required JSON fields:
 - `task_id` (string)
@@ -57,14 +57,14 @@ Required JSON fields:
 Example request:
 
 ```bash
-curl -X POST http://127.0.0.1:5000/set_due_date \
+curl -X POST http://127.0.0.1:5001/set-due-date \
 -H "Content-Type: application/json" \
 -d "{\"task_id\":\"task1\",\"due_date\":\"2026-03-20\"}"
 ```
 
 ---
 
-### POST /due_soon
+### POST /due-soon
 
 Required JSON fields:
 - `tasks` (array of objects containing `task_id` and `due_date`)
@@ -73,7 +73,7 @@ Required JSON fields:
 Example request:
 
 ```bash
-curl -X POST http://127.0.0.1:5000/due_soon \
+curl -X POST http://127.0.0.1:5001/due-soon \
 -H "Content-Type: application/json" \
 -d "{\"tasks\":[{\"task_id\":\"task1\",\"due_date\":\"2026-03-20\"}],\"days\":7}"
 ```
@@ -88,7 +88,7 @@ Required JSON fields:
 Example request:
 
 ```bash
-curl -X POST http://127.0.0.1:5000/overdue \
+curl -X POST http://127.0.0.1:5001/overdue \
 -H "Content-Type: application/json" \
 -d "{\"tasks\":[{\"task_id\":\"task1\",\"due_date\":\"2026-03-10\"}]}"
 ```
@@ -99,14 +99,15 @@ curl -X POST http://127.0.0.1:5000/overdue \
 
 All responses are returned in JSON format.
 
-### /set_due_date responses
+### /set-due-date responses
 
 Success (200 OK):
 
 ```json
 {
   "status": "success",
-  "message": "Due date saved"
+  "task_id": "task1",
+  "due_date": "2026-03-20"
 }
 ```
 
@@ -128,14 +129,14 @@ Failure (400 Bad Request):
 
 ---
 
-### /due_soon responses
+### /due-soon responses
 
 Success (200 OK):
 
 ```json
 {
   "status": "success",
-  "tasks_due_soon": []
+  "tasks": []
 }
 ```
 
@@ -148,7 +149,7 @@ Success (200 OK):
 ```json
 {
   "status": "success",
-  "overdue_tasks": []
+  "tasks": []
 }
 ```
 
@@ -167,9 +168,7 @@ python app.py
 2. In a separate terminal, run:
 
 ```bash
-python test_client_due_date.py
+python test_due_date.py
 ```
 
-The test program sends POST requests to `/set_due_date`, `/due_soon`, and `/overdue` and prints the JSON responses returned by the microservice.
-
----
+The test program sends POST requests to `/set-due-date`, `/due-soon`, and `/overdue` and prints the JSON responses returned by the microservice.
