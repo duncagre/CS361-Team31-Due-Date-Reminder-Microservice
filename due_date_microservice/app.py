@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from datetime import datetime, dat, timedelta, date
+from datetime import datetime, timedelta, date
 import json
 import os
 
@@ -21,7 +21,7 @@ def load_data():
         return {}
 
     try:
-        with open(DATA_FILE, "r"), encoding="utf-8") as file:
+        with open(DATA_FILE, "r", encoding="utf-8") as file:
             data = json.load(file)
 
         if not isinstance(data, dict):
@@ -37,7 +37,7 @@ def save_data(data):
     """
     Saves the current due date data to a JSON file.
     """
-    os.makedirs(os.path.dirname(DATAFILE), exist_ok=True)
+    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
 
     with open(DATA_FILE, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=2)
@@ -93,7 +93,7 @@ def get_tasks_due_soon(task_list, days):
             if is_valid_date_string(due_date_text):
                 due_date_obj = datetime.strptime(due_date_text, "%Y-%m-%d").date()
 
-                if due_date_obj < today:
+                if today <= due_date_obj <= end_date:
                     results.append(task)
 
     return results
@@ -103,6 +103,9 @@ def get_overdue_tasks(task_list):
     """
     Returns tasks that are overdue.
     """
+    results = []
+    today = date.today()
+
     for task in task_list:
         if "due_date" in task:
             due_date_text = task["due_date"]
